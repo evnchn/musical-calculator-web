@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    </head>
+    <body>
+        <div id="wrap">
+            <div id="wrap2">
+                <img src="black-kayboard-final.png" id="kb">
+            </div>
+        </div>
+        <style>
+            #wrap {
+                aspect-ratio: 985 / 1335;
+                object-fit: contain;
+                max-height: 100%;
+                width: 100%;
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+            }
+
+            #wrap2 {
+                aspect-ratio: 985 / 1335;
+                object-fit: contain;
+                max-width: 100%;
+                max-height: 100%;
+                display: flex;
+            }
+
+            #kb {
+                object-fit: contain;
+                width: 100%;
+                height: 100%;
+                aspect-ratio: 985 / 1335;
+            }
+
+            body {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+
+            html,
+            body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                background: black;
+            }
+        </style>
+    </body>
+    <script src="lowLag.js"></script>
+    <script>
+        notesnames = "A5###A6###B5###B6###C4###C5###D4###D5###E4###E5###F4###F5###G4###G5".split("###")
+        lowLag.init();
+        notesnames.forEach(nn => {
+            lowLag.load("audio/" + nn + ".wav");
+        })
+        note_key = {
+            "0": "C4",
+            "1": "C4",
+            "2": "D4",
+            "3": "E4",
+            "4": "F4",
+            "5": "G4",
+            "6": "A5",
+            "7": "B5",
+            "8": "C5",
+            "9": "D5",
+            "/": "E5",
+            "*": "F5",
+            "-": "G5",
+            "+": "A6",
+            ".": "B6",
+            "Enter": "B6"
+        }
+        window.addEventListener('keydown', function(e) {
+            //document.querySelector('p').innerHTML = `You pressed ${e.key}`;
+            //notes["A5"].play()
+            //new Audio("C4.wav").play();
+            //new Audio("C5.wav").play();
+            //lowLag.play("C5.wav");
+            console.log(e.key);
+            console.log(note_key[e.key]);
+            lowLag.play("audio/" + note_key[e.key] + ".wav");
+        }, false);
+		
+        function handlemouse(event) {
+			// Coordinates code from https://stackoverflow.com/a/58568016
+            // https://stackoverflow.com/a/288731/1497139
+            bounds = this.getBoundingClientRect();
+            var left = bounds.left;
+            var top = bounds.top;
+            var x = event.pageX - left;
+            var y = event.pageY - top;
+            var cw = this.clientWidth
+            var ch = this.clientHeight
+            var iw = this.naturalWidth
+            var ih = this.naturalHeight
+            var px = x / cw * iw
+            var py = y / ch * ih
+            //alert("click on "+this.tagName+" at pixel ("+px+","+py+") mouse pos ("+x+"," + y+ ") relative to boundingClientRect at ("+left+","+top+") client image size: "+cw+" x "+ch+" natural image size: "+iw+" x "+ih );
+            //px py is the wanted value
+            console.log(px, py)
+            yvals = [54, 162, 203, 386, 427, 610, 651, 834, 875, 1059, 1099, 1283]
+            xvals = [52, 242, 282, 472, 514, 702, 744, 932]
+            confirmed_x = -1
+            confirmed_y = -1
+            for (var i = 0; i + 1 < yvals.length; i++) {
+                if (py > yvals[i] && py < yvals[i + 1]) {
+                    console.log(i)
+                    confirmed_y = i
+                    break;
+                }
+            }
+            for (var i = 0; i + 1 < xvals.length; i++) {
+                if (px > xvals[i] && px < xvals[i + 1]) {
+                    console.log(i)
+                    confirmed_x = i
+                    break;
+                }
+            }
+            if (confirmed_x >= 0 && confirmed_y >= 0) {
+                console.log(confirmed_x + "," + confirmed_y)
+            }
+            keysdict = {
+                "0,0": "cfg",
+                "0,2": "bksp",
+                "0,4": "7",
+                "0,6": "4",
+                "0,8": "1",
+                "0,10": "0",
+                "2,2": "/",
+                "2,4": "8",
+                "2,6": "5",
+                "2,8": "2",
+                "2,10": "0",
+                "4,2": "*",
+                "4,4": "9",
+                "4,6": "6",
+                "4,8": "3",
+                "4,10": ".",
+                "6,2": "-",
+                "6,4": "+",
+                "6,6": "+",
+                "6,8": "Enter",
+                "6,10": "Enter",
+                "1,10": "0",
+                "6,5": "+",
+                "1,9": "Enter"
+            }
+            lowLag.play("audio/" + note_key[keysdict[confirmed_x + "," + confirmed_y]] + ".wav");
+        }
+        document.getElementById("kb").addEventListener('mousedown', handlemouse);
+        document.getElementById("kb").addEventListener('touchstart', handlemouse);
+    </script>
+</html>
