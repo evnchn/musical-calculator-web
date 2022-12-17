@@ -52,10 +52,11 @@
     </body>
     <script src="lowLag.js"></script>
     <script>
-        notesnames = "A5###A6###B5###B6###C4###C5###D4###D5###E4###E5###F4###F5###G4###G5".split("###")
+		var capslockon = false;
+        notesnames = "A4.wav###A5.wav###A6.wav###As4.wav###As5.wav###As6.wav###B4.wav###B5.wav###B6.wav###C3.wav###C4.wav###C5.wav###C6.wav###Cs3.wav###Cs4.wav###Cs5.wav###D3.wav###D4.wav###D5.wav###Ds3.wav###Ds4.wav###Ds5.wav###E3.wav###E4.wav###E5.wav###F3.wav###F4.wav###F5.wav###Fs3.wav###Fs4.wav###Fs5.wav###G3.wav###G4.wav###G5.wav###Gs3.wav###Gs4.wav###Gs5.wav".split("###")
         lowLag.init();
         notesnames.forEach(nn => {
-            lowLag.load("audio/" + nn + ".wav");
+            lowLag.load("audio/" + nn);
         })
         note_key = {
             "0": "C4",
@@ -72,9 +73,54 @@
             "*": "F5",
             "-": "G5",
             "+": "A6",
-            ".": "B6",
-            "Enter": "B6"
+            ".": "C6",
+            "Enter": "B6", 
+
+			
         }
+        note_key_numpad_capslock = {
+            "1": "Cs4",
+            "2": "Ds4",
+
+            "4": "Fs4",
+            "5": "Gs4",
+            "6": "As5",
+
+            "8": "Cs5",
+            "9": "Ds5",
+			
+            "/": "Fs5",
+            "*": "Gs5",
+            "-": "As6"
+			
+        }
+		note_key_keyboard = {
+			"q": "C4",
+			"2": "Cs4",
+			"w": "D4",
+			"3": "Ds4",
+			"e": "E4",
+			"r": "F4",
+			"5": "Fs4",
+			"t": "G4",
+			"6": "Gs4",
+			"y": "A5",
+			"7": "As5",
+			"u": "B5",
+			"z": "C5",
+			"s": "Cs5",
+			"x": "D5",
+			"d": "Ds5",
+			"c": "E5",
+			"v": "F5",
+			"g": "Fs5",
+			"b": "G5",
+			"h": "Gs5",
+			"n": "A6",
+			"j": "As6",
+			"m": "B6",
+			",": "C6",
+		}
         window.addEventListener('keydown', function(e) {
             //document.querySelector('p').innerHTML = `You pressed ${e.key}`;
             //notes["A5"].play()
@@ -83,8 +129,26 @@
             //lowLag.play("C5.wav");
             console.log(e.key);
             console.log(note_key[e.key]);
-            lowLag.play("audio/" + note_key[e.key] + ".wav");
-        }, false);
+			if (e.location == 3) {
+			if (capslockon){
+            lowLag.play("audio/" + note_key_numpad_capslock[e.key] + ".wav");
+			console.log("changed!!!")
+			} else {
+			
+			lowLag.play("audio/" + note_key[e.key] + ".wav");
+			}
+			} else {
+			if (event.getModifierState('CapsLock')) {
+			capslockon = true;
+			console.log("Setting to "+capslockon);
+			lowLag.play("audio/" + note_key_keyboard[e.key.toLowerCase()].replace(/\d+/g, function(match) {return parseInt(match) - 1;}) + ".wav");
+			} else {
+			capslockon = false;
+			console.log("Setting to "+capslockon);
+			lowLag.play("audio/" + note_key_keyboard[e.key] + ".wav");
+			}
+        }
+		}, false);
 		
         function handlemouse(event) {
 			// Coordinates code from https://stackoverflow.com/a/58568016
@@ -150,7 +214,13 @@
                 "6,5": "+",
                 "1,9": "Enter"
             }
-            lowLag.play("audio/" + note_key[keysdict[confirmed_x + "," + confirmed_y]] + ".wav");
+			if (capslockon){
+            lowLag.play("audio/" + note_key_numpad_capslock[keysdict[confirmed_x + "," + confirmed_y]] + ".wav");
+			console.log("changed!!!")
+			} else {
+			
+			lowLag.play("audio/" + note_key[keysdict[confirmed_x + "," + confirmed_y]] + ".wav");
+			}
         }
         document.getElementById("kb").addEventListener('mousedown', handlemouse);
         document.getElementById("kb").addEventListener('touchstart', handlemouse);
